@@ -1,0 +1,49 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  .button {
+    display: inline-flex;    /* make flex for centring */
+    justify-content: center; /* vertically centre */
+    align-items: center;     /* horizontally centre */
+    position: relative;      /* for adding absolute positioned children */
+    min-height: 50px;         /* test value to show text is centred */
+    overflow: hidden;        /* hide pseudo elements when not shown */
+  }
+  
+  .button:before,
+  .button:after {
+    content: '';             /* make coloured animatable bits */
+    display: block;
+    height: 50%;
+    width: 100%;
+    position: absolute;
+    transition: all 1s ease-in;
+    z-index: 1;
+  }
+  
+  .button:before {
+    top: 0;
+    right: 100%;
+    background: grey;
+  }
+  
+  .button:hover:before {
+    right: 0;
+  }
+  
+  .button:after {
+    top: 50%;
+    left: 100%;
+    background: darkgrey;
+  }
+  
+  .button:hover:after {
+    left: 0;
+  }
+  
+  .text { 
+    position: relative;  /* needs to have a higher z-index than the pseduo elements so text  appears on top */
+    z-index: 2;
+  }
+  
