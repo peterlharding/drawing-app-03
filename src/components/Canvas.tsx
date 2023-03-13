@@ -459,7 +459,7 @@ const Canvas = (props: Props) => {
 
                         const point: Point = {x: clientX, y: clientY}
 
-                        // setMouseDownPoint(point)
+                        setMouseDownPoint(point)
                     }
                 }
                 break
@@ -621,7 +621,8 @@ const Canvas = (props: Props) => {
 
     return (
         <div>
-
+            {pickTool()}
+            {/* setLineFeatures() */}
                 <canvas 
                     id='canvas'
                     style={{backgroundColor: '#e0e0e0'}}
