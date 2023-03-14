@@ -13,15 +13,14 @@ import {Rectangle} from '../models/rectangle'
 // ---------------------------------------------------------------------------
 
 interface Props {
-    targets: Rectangle[]|[];
+    targets: Rectangle[];
 }
 
 // ---------------------------------------------------------------------------
 
-const Canvas = (props: Props) => {
+const Canvas = ({targets}: Props) => {
 
-    const [propElements, setPropElements] = useState<DrawingElement[]|[]>([]);
-    const [elements, setElements] = useState<DrawingElement[]|[]>([]);
+    const [elements, setElements] = useState<DrawingElement[]>([]);
     const [action, setAction] = useState('none');
     const [tool, setTool] = useState('rectangle');
     const [selectedElement, setSelectedElement] = useState<DrawingElement|null>(null);
@@ -34,23 +33,29 @@ const Canvas = (props: Props) => {
 
     // -----------------------------------------------------------------------
 
+    const createElement = (id: number, x1: number, y1: number, x2: number, y2: number, type: string): DrawingElement => {
+
+        console.log(`createElement - id ${id} : x1 ${x1} y1 ${y1} x2 ${x2} y2 ${y2} - ${type}`)
+
+        return {id, x1, y1, x2, y2, type}
+    }
+
+    // const newElements = targets.map((target, index) => (
+    //     createElement(index, target.x1, target.y1, target.x2, target.y2, 'rectangle')
+    // ))
+
+    // // setElements(prevState => [...prevState, newElement]);
+    // setElements(newElements)
+
+
+    // -----------------------------------------------------------------------
+
     useEffect(() => {
-        const targets = props.targets
-
-        // const elements: DrawingElement[] = []
-
-        if (targets.length > 0) {
-            targets.map(target => {
-                const id = elements.length
-                const newElement = createElement(id, target.x1, target.y1, target.x2, target.y2, 'rectangle')
-                setElements(prevState => [...prevState, newElement]);
-                // elements[id] = newElement
-                console.log(`Prop Elements - ${JSON.stringify(elements)}`)
-            })
-
-            // setPropElements(elements)
-        }
-    }, [props.targets])
+        const newElements = targets.map((target, index) => (
+            createElement(index, target.x1, target.y1, target.x2, target.y2, 'rectangle')
+        ))
+        setElements(newElements)
+    }, [targets])
 
     // -----------------------------------------------------------------------
     // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage
@@ -72,42 +77,9 @@ const Canvas = (props: Props) => {
                 context.fillStyle = 'green';
                 elements.forEach((element) => draw(context, element))
             }
-            
-            // const roughCanvas = rough.canvas(canvas);
-
-            // const rect = generator.rectangle(50, 50, 100, 100);
-            // const line = generator.line(50, 50, 150, 150);
-
-            // roughCanvas.draw(rect);
-            // roughCanvas.draw(line);
-
         }
-
-        // setElements(newElements)
     }, [elements])
 
-    // -----------------------------------------------------------------------
-
-    const createElement = (id: number, x1: number, y1: number, x2: number, y2: number, type: string): DrawingElement => {
-        // let roughElement
-
-        switch (type) {
-            case 'line': {
-                // roughElement = generator.line(x1, y1, x2, y2)
-                break
-            }
-            case 'rectangle': {
-                // roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1)
-                break
-            }
-            default:
-                // roughElement = null
-        }
-
-        console.log(`createElement - id ${id} : x1 ${x1} y1 ${y1} x2 ${x2} y2 ${y2} - ${type}`)
-
-        return {id, x1, y1, x2, y2, type}
-    }
 
     // -----------------------------------------------------------------------
     // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes
@@ -627,7 +599,8 @@ const Canvas = (props: Props) => {
     return (
         <div>
             {pickTool()}
-            {/* setLineFeatures() */}
+            {/* {setLineFeatures()} */}
+            {/* {info()} */}
                 <canvas 
                     id='canvas'
                     style={{backgroundColor: '#e0e0e0'}}
