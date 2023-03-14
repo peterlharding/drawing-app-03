@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 
 import logo from '../assets/img/logo.svg'
 
@@ -20,6 +20,7 @@ interface Props {
 
 const Canvas = (props: Props) => {
 
+    const [propElements, setPropElements] = useState<DrawingElement[]|[]>([]);
     const [elements, setElements] = useState<DrawingElement[]|[]>([]);
     const [action, setAction] = useState('none');
     const [tool, setTool] = useState('rectangle');
@@ -31,7 +32,59 @@ const Canvas = (props: Props) => {
 
     const sampleImage = '../assets/img/sample-1.png';
 
+    // -----------------------------------------------------------------------
 
+    useEffect(() => {
+        const targets = props.targets
+
+        // const elements: DrawingElement[] = []
+
+        if (targets.length > 0) {
+            targets.map(target => {
+                const id = elements.length
+                const newElement = createElement(id, target.x1, target.y1, target.x2, target.y2, 'rectangle')
+                setElements(prevState => [...prevState, newElement]);
+                // elements[id] = newElement
+                console.log(`Prop Elements - ${JSON.stringify(elements)}`)
+            })
+
+            // setPropElements(elements)
+        }
+    }, [props.targets])
+
+    // -----------------------------------------------------------------------
+    // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage
+
+    useLayoutEffect(() => {
+        const canvas  = document.getElementById('canvas');
+
+        if (canvas != null && (canvas instanceof HTMLCanvasElement)) {
+            const context = canvas.getContext('2d');
+
+            const backgroundImage = new Image();
+
+            // backgroundImage.src = '../assets/img/english-countryside.jpg'    // 'https://www.w3schools.com/tags/img_the_scream.jpg' // 'https://performiq.com/img/logo2.gif' // '../assets/img/sample-1.png'
+            // backgroundImage.src = 'https://wallpapercave.com/wp/pf3xWQ5.jpg' // 'https://performiq.com/img/logo2.gif' // '../assets/img/sample-1.png'
+
+            if (context !== null) {
+                context.clearRect(0, 0, canvas.width, canvas.height)
+                context.drawImage(backgroundImage, 0, 0);
+                context.fillStyle = 'green';
+                elements.forEach((element) => draw(context, element))
+            }
+            
+            // const roughCanvas = rough.canvas(canvas);
+
+            // const rect = generator.rectangle(50, 50, 100, 100);
+            // const line = generator.line(50, 50, 150, 150);
+
+            // roughCanvas.draw(rect);
+            // roughCanvas.draw(line);
+
+        }
+
+        // setElements(newElements)
+    }, [elements])
 
     // -----------------------------------------------------------------------
 
@@ -51,7 +104,7 @@ const Canvas = (props: Props) => {
                 // roughElement = null
         }
 
-        console.log(`createElement - x1 ${x1} y1 ${y1} x2 ${x2} y2 ${y2}`)
+        console.log(`createElement - id ${id} : x1 ${x1} y1 ${y1} x2 ${x2} y2 ${y2} - ${type}`)
 
         return {id, x1, y1, x2, y2, type}
     }
@@ -77,8 +130,6 @@ const Canvas = (props: Props) => {
         }
         switch (element.type) {
             case 'rectangle': {
-                console.log(`draw - x1 ${element.x1} y1 ${element.y1} x2 ${element.x2} y2 ${element.y2}`)
-
                 const width = element.x2 - element.x1
                 const height = element.y2 - element.y1
                 context.strokeRect(element.x1, element.y1, width, height)
@@ -104,54 +155,8 @@ const Canvas = (props: Props) => {
                 break
             }
         }
-
+        console.log(`draw - id: ${element.id} - x1 ${element.x1} y1 ${element.y1} x2 ${element.x2} y2 ${element.y2} - ${element.type}`)
     }
-
-    // -----------------------------------------------------------------------
-    // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage
-
-    useLayoutEffect(() => {
-        const canvas  = document.getElementById('canvas');
-
-        const newElements: DrawingElement[] = []
-
-        if (canvas != null && (canvas instanceof HTMLCanvasElement)) {
-            const context = canvas.getContext('2d');
-
-            const backgroundImage = new Image();
-
-            // backgroundImage.src = '../assets/img/english-countryside.jpg'    // 'https://www.w3schools.com/tags/img_the_scream.jpg' // 'https://performiq.com/img/logo2.gif' // '../assets/img/sample-1.png'
-            // backgroundImage.src = 'https://wallpapercave.com/wp/pf3xWQ5.jpg' // 'https://performiq.com/img/logo2.gif' // '../assets/img/sample-1.png'
-
-            if (context !== null) {
-                context.clearRect(0, 0, canvas.width, canvas.height)
-                context.drawImage(backgroundImage, 0, 0);
-                context.fillStyle = 'green';
-                elements.forEach((element) => draw(context, element))
-            }
-            
-            // const roughCanvas = rough.canvas(canvas);
-
-            // const rect = generator.rectangle(50, 50, 100, 100);
-            // const line = generator.line(50, 50, 150, 150);
-
-            // roughCanvas.draw(rect);
-            // roughCanvas.draw(line);
-
-            const targets = props.targets
-
-            if (targets.length > 0) {
-                props.targets.map(target => {
-                    const id = newElements.length
-                    const newElement = createElement(id, target.x1, target.y1, target.x2, target.y2, 'rectangle')
-                    newElements[id] = newElement
-                    console.log(JSON.stringify(newElements))
-                })
-            }
-        }
-
-        // setElements(newElements)
-    }, [elements])
 
     // -----------------------------------------------------------------------
 

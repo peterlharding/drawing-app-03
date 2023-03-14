@@ -10,7 +10,7 @@ import './App.css'
 
 const App = () => {
 
-    const targets: Rectangle[] = []  // [{x1: 10, y1: 10, x2: 50, y2: 50}, {x1: 100, y1: 100, x2: 200, y2: 200}]
+    const targets: Rectangle[] = [{x1: 100, y1: 100, x2: 200, y2: 200}, {x1: 300, y1: 300, x2: 400, y2: 400}]
     
     return (
         <div className="App">
