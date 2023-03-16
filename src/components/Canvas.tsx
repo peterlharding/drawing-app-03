@@ -16,7 +16,9 @@ interface Props {
 // ---------------------------------------------------------------------------
 
 const Canvas = ({targets}: Props) => {
+
     const canvasRef = useRef<HTMLCanvasElement>(null);
+
     const [elements, setElements] = useState<DrawingElement[]>([]);
     const [action, setAction] = useState('none');
     const [tool, setTool] = useState('rectangle');
@@ -25,7 +27,7 @@ const Canvas = ({targets}: Props) => {
     // const [mouseUpPoint, setMouseUpPoint] = useState<Point|null>(null);
     // const [mousePoint, setMousePoint] = useState<Point|null>(null);
     const [lineType, setLineType] = useState('solid');
-
+    const [canvasOriginPoint, setCanvasOriginPoint] = useState<Point|null>(null);
     const sampleImage = '../assets/img/sample-1.png';
 
     // -----------------------------------------------------------------------
@@ -65,6 +67,18 @@ const Canvas = ({targets}: Props) => {
 
         if (canvas && (canvas instanceof HTMLCanvasElement)) {
             const context = canvas.getContext('2d');
+
+            const rect = canvas.getBoundingClientRect();
+
+            console.log(`Canvas Bounding Client Rect: ${rect.top}, ${rect.left}, ${rect.bottom}, ${rect.right}  height ${rect.height}  width ${rect.width}`);
+
+            const topLeft = {x: rect.left, y: rect.top}
+
+            setCanvasOriginPoint(topLeft);
+
+            console.log(`>>>>>  canvas.width ${canvas.width}`);
+            console.log(`>>>>>  canvas.height ${canvas.height}`);
+
 
             const backgroundImage = new Image();
 
@@ -342,37 +356,40 @@ const Canvas = ({targets}: Props) => {
     const mouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
 
         const {clientX, clientY} = event;
-        const point: Point = {x: clientX, y: clientY};
 
-        setMouseDownPoint(point);
+        if (canvasOriginPoint) {
+            const point: Point = {x: clientX - canvasOriginPoint.x, y: clientY - canvasOriginPoint.y};
 
-        console.log(`Down ${point.x} ${point.y} - Tool ${tool}`);
+            setMouseDownPoint(point);
 
-        if (tool === 'selection') {
-            // If we are on an element
-            const element = getElementAtPosition(point.x, point.y, elements);
+            console.log(`Down ${point.x} ${point.y} - Tool ${tool}`);
 
-            if (element) {
-                setSelectedElement(element);
-                console.log(JSON.stringify(element));
-                if (element.position === 'inside') {
-                    console.log('Moving...');
-                    setAction('moving');
-                } else {
-                    console.log('resizing...');
-                    setAction('resizing');
+            if (tool === 'selection') {
+                // If we are on an element
+                const element = getElementAtPosition(point.x, point.y, elements);
+
+                if (element) {
+                    setSelectedElement(element);
+                    console.log(JSON.stringify(element));
+                    if (element.position === 'inside') {
+                        console.log('Moving...');
+                        setAction('moving');
+                    } else {
+                        console.log('resizing...');
+                        setAction('resizing');
+                    }
                 }
+            } else {
+                const id = elements.length;
+
+                const element = createElement(id, point.x, point.y, point.x, point.y, tool);
+                
+                setElements(prevState => [...prevState, element]);
+
+                console.log('drawing...');
+
+                setAction('drawing');
             }
-        } else {
-            const id = elements.length;
-
-            const element = createElement(id, point.x, point.y, point.x, point.y, tool);
-            
-            setElements(prevState => [...prevState, element]);
-
-            console.log('drawing...');
-
-            setAction('drawing');
         }
     }
 
@@ -382,87 +399,91 @@ const Canvas = ({targets}: Props) => {
 
         const {clientX, clientY} = event;
 
-        const point: Point = {x: clientX, y: clientY};
+        if (canvasOriginPoint) {
+            const point: Point = {x: clientX - canvasOriginPoint.x, y: clientY - canvasOriginPoint.y};
 
-        // setMousePoint(point);
+            // setMouseDownPoint(point);
 
-        if (tool === 'selection') {
-            const element = getElementAtPosition(clientX, clientY, elements);
-            // console.log(JSON.stringify(element));
-            if (element) {
-                // setSelectedElement(element);
-                const cursor = cursorForPosition(element.position);
-                // console.log(cursor);
-                event.currentTarget.style.cursor = cursor;
-            } else {
-                event.currentTarget.style.cursor = "default";
-            }
-        }
+            // setMousePoint(point);
 
-        if (!action || (action == '')) {
-            return;
-        }
-
-        switch (action) {
-
-            case 'drawing': {
-                const index = elements.length - 1;
-                const {x1, y1} = elements[index];
-                updateElement(index, x1, y1, clientX, clientY, tool);
-                break;
+            if (tool === 'selection') {
+                const element = getElementAtPosition(point.x, point.y, elements);
+                // console.log(JSON.stringify(element));
+                if (element) {
+                    // setSelectedElement(element);
+                    const cursor = cursorForPosition(element.position);
+                    // console.log(cursor);
+                    event.currentTarget.style.cursor = cursor;
+                } else {
+                    event.currentTarget.style.cursor = "default";
+                }
             }
 
-            case 'moving': {
+            if (!action || (action == '')) {
+                return;
+            }
 
-                // event.currentTarget.style.cursor = "move";
+            switch (action) {
 
-                if (selectedElement !== null) {
-                    const {id, x1, y1, x2, y2, type} = selectedElement;
+                case 'drawing': {
+                    const index = elements.length - 1;
+                    const {x1, y1} = elements[index];
+                    updateElement(index, x1, y1, point.x, point.y, tool);
+                    break;
+                }
 
-                    const width = x2 - x1;
-                    const height = y2 - y1;
-    
-                    if (mouseDownPoint) {
-                        const deltaX = clientX - mouseDownPoint.x;
-                        const deltaY = clientY - mouseDownPoint.y;
+                case 'moving': {
 
-                        if ((Math.abs(deltaX) >= 2) && (Math.abs(deltaY) >= 2)) {
-                            console.log(`moving - Mouse Down    (${mouseDownPoint.x}, ${mouseDownPoint.y})`);
-                            console.log(`moving - Mouse Current (${clientX}, ${clientY})`);
-                            console.log(`moving - Delta         (${deltaX}, ${deltaY})`);
-                            console.log(`moving - x1 ${x1} y1 ${y1} x2 ${x2} y2 ${y2}`);
-          
-                            updateElement(id, selectedElement.x1 + deltaX, selectedElement.y1 + deltaY, selectedElement.x2 + deltaX, selectedElement.y2 + deltaY, type);
-    
-                            // const point: Point = {x: clientX, y: clientY};
-    
-                            // setMouseDownPoint(point);
+                    // event.currentTarget.style.cursor = "move";
+
+                    if (selectedElement !== null) {
+                        const {id, x1, y1, x2, y2, type} = selectedElement;
+
+                        const width = x2 - x1;
+                        const height = y2 - y1;
+        
+                        if (mouseDownPoint) {
+                            const deltaX = point.x - mouseDownPoint.x;
+                            const deltaY = point.y - mouseDownPoint.y;
+
+                            if ((Math.abs(deltaX) >= 2) && (Math.abs(deltaY) >= 2)) {
+                                console.log(`moving - Mouse Down    (${mouseDownPoint.x}, ${mouseDownPoint.y})`);
+                                console.log(`moving - Mouse Current (${clientX}, ${clientY})`);
+                                console.log(`moving - Delta         (${deltaX}, ${deltaY})`);
+                                console.log(`moving - x1 ${x1} y1 ${y1} x2 ${x2} y2 ${y2}`);
+            
+                                updateElement(id,
+                                    selectedElement.x1 + deltaX,
+                                    selectedElement.y1 + deltaY,
+                                    selectedElement.x2 + deltaX,
+                                    selectedElement.y2 + deltaY, type);
+                            }
                         }
                     }
+                    break;
                 }
-                break;
-            }
 
-            case 'resizing': {
-                if (selectedElement !== null) {
-                    const {id, type, position, x1, y1, x2, y2} = selectedElement;
+                case 'resizing': {
+                    if (selectedElement !== null) {
+                        const {id, type, position, x1, y1, x2, y2} = selectedElement;
 
-                    console.log(`resizing - x1 ${x1} y1 ${y1} x2 ${x2} y2 ${y2}`);
+                        console.log(`resizing - x1 ${x1} y1 ${y1} x2 ${x2} y2 ${y2}`);
 
-                    const points = resizeCoordinates(clientX, clientY, x1, y1, x2, y2, position);
+                        const points = resizeCoordinates(point.x, point.y, x1, y1, x2, y2, position);
 
-                    if (points) {
-                        const {topLeft, bottomRight} = points;
-                        console.log(`resizing - topLeft (${topLeft.x}, ${topLeft.y}) bottomRight (${bottomRight.x}, ${bottomRight.y})`);
+                        if (points) {
+                            const {topLeft, bottomRight} = points;
+                            console.log(`resizing - topLeft (${topLeft.x}, ${topLeft.y}) bottomRight (${bottomRight.x}, ${bottomRight.y})`);
 
-                        updateElement(id, topLeft.x, topLeft.y, bottomRight.x, bottomRight.y, type);
+                            updateElement(id, topLeft.x, topLeft.y, bottomRight.x, bottomRight.y, type);
+                        }
                     }
+                    break;
                 }
-                break;
-            }
 
-            default:
-                break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -470,22 +491,25 @@ const Canvas = ({targets}: Props) => {
 
     const mouseUp = (event: React.MouseEvent<HTMLCanvasElement>) => {
         const {clientX, clientY} = event;
-        const point: Point = {x: clientX, y: clientY};
-        // setMouseUpPoint(point);
 
-        const index = selectedElement?.id;
+        if (canvasOriginPoint) {
+            const point: Point = {x: clientX - canvasOriginPoint.x, y: clientY - canvasOriginPoint.y};
 
-        if (index !== undefined) {
-            const {id, type} = elements[index]
+            const index = selectedElement?.id;
 
-            if (action === 'drawing' || action === 'moving' || action === 'resizing') {
-                const element = elements[index];
-                console.log(`mouseUp - Before adjust - x1 ${element.x1} y1 ${element.y1} x2 ${element.x2} y2 ${element.y2}`);
-                const {x1, y1, x2, y2} = adjustElementCoordinates(elements[index]);
-                console.log(`mouseUp - After adjust  - x1 ${x1} y1 ${y1} x2 ${x2} y2 ${y2}`);
-                // updateElement(id, x1, y1, x2, y2, type);
+            if (index !== undefined) {
+                const {id, type} = elements[index]
+
+                if (action === 'drawing' || action === 'moving' || action === 'resizing') {
+                    const element = elements[index];
+                    console.log(`mouseUp - Before adjust - x1 ${element.x1} y1 ${element.y1} x2 ${element.x2} y2 ${element.y2}`);
+                    const {x1, y1, x2, y2} = adjustElementCoordinates(elements[index]);
+                    console.log(`mouseUp - After adjust  - x1 ${x1} y1 ${y1} x2 ${x2} y2 ${y2}`);
+                    // updateElement(id, x1, y1, x2, y2, type);
+                }
             }
         }
+
         setAction('none');
         setSelectedElement(null);
         event.currentTarget.style.cursor = "default";
