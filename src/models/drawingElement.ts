@@ -6,6 +6,9 @@ import {Rectangle} from './rectangle'
 import {Crosshairs} from './crosshairs'
 
 
+export type LineType = 'solid' | 'dashed'
+export type ElementType = 'rectangle' | 'line' | 'crosshairs' | 'selection'
+
 export interface DrawingElement {
     id: number,
     x1: number,
@@ -16,6 +19,6 @@ export interface DrawingElement {
     // line?: Line,
     // circle?: Circle,
     // crosshairs?: Crosshairs,
-    type: string,
+    type: ElementType,
     position?: Position
 }

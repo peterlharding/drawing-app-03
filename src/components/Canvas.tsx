@@ -6,7 +6,7 @@ import Container from 'react-bootstrap/Container'
 
 import {Point} from '../models/point'
 import {PairOfPoints} from '../models/pairOfPoints'
-import {DrawingElement} from '../models/drawingElement'
+import {DrawingElement, ElementType, LineType} from '../models/drawingElement'
 import {Position} from '../models/position'
 import {Rectangle} from '../models/rectangle'
 import {Circle} from '../models/circle'
@@ -23,18 +23,18 @@ const Canvas = ({targets}: Props) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [elements, setElements] = useState<DrawingElement[]>([]);
     const [action, setAction] = useState('none');
-    const [tool, setTool] = useState('rectangle');
+    const [tool, setTool] = useState<ElementType>('rectangle');
     const [selectedElement, setSelectedElement] = useState<DrawingElement|null>(null);
     const [mouseDownPoint, setMouseDownPoint] = useState<Point|null>(null)
     // const [mouseUpPoint, setMouseUpPoint] = useState<Point|null>(null)
     // const [mousePoint, setMousePoint] = useState<Point|null>(null)
-    const [lineType, setLineType] = useState('solid')
+    const [lineType, setLineType] = useState<LineType>('solid')
 
     const sampleImage = '../assets/img/sample-1.png';
 
     // -----------------------------------------------------------------------
 
-    const createElement = (id: number, x1: number, y1: number, x2: number, y2: number, type: string): DrawingElement => {
+    const createElement = (id: number, x1: number, y1: number, x2: number, y2: number, type: ElementType): DrawingElement => {
 
         console.log(`createElement - id ${id} : x1 ${x1} y1 ${y1} x2 ${x2} y2 ${y2} - ${type}`)
 
@@ -271,7 +271,7 @@ const Canvas = ({targets}: Props) => {
             y1: number,
             x2: number,
             y2: number,
-            type: string) => {
+            type: ElementType) => {
 
         const updatedElement = createElement(id, x1, y1, x2, y2, type)
 
