@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 
 import logo from '../assets/img/logo.svg'
 
@@ -20,7 +20,7 @@ interface Props {
 // ---------------------------------------------------------------------------
 
 const Canvas = ({targets}: Props) => {
-
+    const canvasRef = useRef<HTMLCanvasElement>(null);
     const [elements, setElements] = useState<DrawingElement[]>([]);
     const [action, setAction] = useState('none');
     const [tool, setTool] = useState('rectangle');
@@ -65,9 +65,9 @@ const Canvas = ({targets}: Props) => {
     // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage
 
     useLayoutEffect(() => {
-        const canvas  = document.getElementById('canvas');
+        const canvas  = canvasRef.current;
 
-        if (canvas != null && (canvas instanceof HTMLCanvasElement)) {
+        if (canvas && (canvas instanceof HTMLCanvasElement)) {
             const context = canvas.getContext('2d');
 
             const backgroundImage = new Image();
@@ -596,6 +596,7 @@ const Canvas = ({targets}: Props) => {
             {/* {info()} */}
                 <canvas 
                     id='canvas'
+                    ref={canvasRef}
                     style={{backgroundColor: '#e0e0e0'}}
                     width={window.innerWidth}
                     height={window.innerHeight}
