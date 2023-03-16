@@ -39,7 +39,7 @@ const Canvas = ({targets}: Props) => {
         console.log(`createElement - id ${id} : x1 ${x1} y1 ${y1} x2 ${x2} y2 ${y2} - ${type}`);
 
         return {id, x1, y1, x2, y2, type};
-    }
+    };
 
     // -----------------------------------------------------------------------
 
@@ -121,7 +121,7 @@ const Canvas = ({targets}: Props) => {
                     break;
                 }
                 case 'crosshairs': {
-                    const size = element.x2 - element.x1
+                    const size = element.x2 - element.x1;
     
                     context.beginPath();
                     context.moveTo(element.x1 - size, element.y1);
@@ -135,7 +135,7 @@ const Canvas = ({targets}: Props) => {
         }
 
         console.log(`draw - id: ${element.id} - x1 ${element.x1} y1 ${element.y1} x2 ${element.x2} y2 ${element.y2} - ${element.type}`);
-    }
+    };
 
     // -----------------------------------------------------------------------
 
@@ -167,7 +167,7 @@ const Canvas = ({targets}: Props) => {
                 return Math.abs(offset) < 1;
             }          
         }
-    }
+    };
     
 
     // -----------------------------------------------------------------------
@@ -179,7 +179,7 @@ const Canvas = ({targets}: Props) => {
         y1: number,
         name: string) => {
         return (Math.abs(x - x1) < 5 && Math.abs(y - y1) < 5) ? name : null;
-    }
+    };
 
     // -----------------------------------------------------------------------
 
@@ -219,7 +219,7 @@ const Canvas = ({targets}: Props) => {
                 return null;
         }
 
-    }
+    };
 
     // -----------------------------------------------------------------------
 
@@ -231,12 +231,12 @@ const Canvas = ({targets}: Props) => {
         return elements
                 .map(element => ({...element, position: positionWithinElement(x, y, element)}))
                 .find(element => element.position !== null);
-    }
+    };
 
     // -----------------------------------------------------------------------
 
     const adjustElementCoordinates = (element: DrawingElement) => {
-        const {type, x1, y1, x2, y2} = element
+        const {type, x1, y1, x2, y2} = element;
 
         switch (type) {
             case 'rectangle': {
@@ -260,7 +260,7 @@ const Canvas = ({targets}: Props) => {
                 return {x1: 10, y1: 10, x2: 20, y2: 20};
             }
         }
-    }
+    };
 
 
     // -----------------------------------------------------------------------
@@ -282,7 +282,7 @@ const Canvas = ({targets}: Props) => {
         elementsCopy[id] = updatedElement;
 
         setElements(elementsCopy);
-    }
+    };
 
     // -----------------------------------------------------------------------
 
@@ -299,7 +299,7 @@ const Canvas = ({targets}: Props) => {
             default:
                 return "move";
         }
-    }
+    };
 
     // -----------------------------------------------------------------------
 
@@ -339,7 +339,7 @@ const Canvas = ({targets}: Props) => {
             default:
                 return null;
         }
-    }
+    };
 
     // -----------------------------------------------------------------------
 
@@ -378,7 +378,7 @@ const Canvas = ({targets}: Props) => {
 
             setAction('drawing');
         }
-    }
+    };
 
     // -----------------------------------------------------------------------
 
@@ -468,7 +468,7 @@ const Canvas = ({targets}: Props) => {
             default:
                 break;
         }
-    }
+    };
 
     // -----------------------------------------------------------------------
 
@@ -494,14 +494,14 @@ const Canvas = ({targets}: Props) => {
         setSelectedElement(null);
         event.currentTarget.style.cursor = "default";
         setTool('selection');
-    }
+    };
 
     // -----------------------------------------------------------------------
 
     const onLoad = () => {
         setAction('none');
         setSelectedElement(null);
-    }
+    };
 
     // -----------------------------------------------------------------------
 
@@ -524,7 +524,7 @@ const Canvas = ({targets}: Props) => {
                 <label htmlFor='element' style={{paddingLeft: '5px'}}>Element&nbsp;</label>
             </span>
         );
-    }
+    };
 
     // -----------------------------------------------------------------------
 
@@ -545,7 +545,7 @@ const Canvas = ({targets}: Props) => {
                 <label htmlFor='dashed'>Dashed</label>
             </span>
         );
-    }
+    };
 
     // -----------------------------------------------------------------------
 
@@ -582,7 +582,7 @@ const Canvas = ({targets}: Props) => {
 
             </div>
         );
-    }
+    };
 
     // -----------------------------------------------------------------------
 
@@ -607,7 +607,7 @@ const Canvas = ({targets}: Props) => {
         </div>
     );
 
-}
+};
 
 // ---------------------------------------------------------------------------
 
