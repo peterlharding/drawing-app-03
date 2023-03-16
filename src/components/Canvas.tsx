@@ -1,9 +1,5 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 
-import logo from '../assets/img/logo.svg'
-
-import Container from 'react-bootstrap/Container'
-
 import {Point} from '../models/point'
 import {PairOfPoints} from '../models/pairOfPoints'
 import {DrawingElement} from '../models/drawingElement'
