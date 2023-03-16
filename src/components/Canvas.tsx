@@ -9,6 +9,7 @@ import {PairOfPoints} from '../models/pairOfPoints'
 import {DrawingElement} from '../models/drawingElement'
 import {Position} from '../models/position'
 import {Rectangle} from '../models/rectangle'
+import {Circle} from '../models/circle'
 
 // ---------------------------------------------------------------------------
 
@@ -25,8 +26,8 @@ const Canvas = ({targets}: Props) => {
     const [tool, setTool] = useState('rectangle');
     const [selectedElement, setSelectedElement] = useState<DrawingElement|null>(null);
     const [mouseDownPoint, setMouseDownPoint] = useState<Point|null>(null)
-    const [mouseUpPoint, setMouseUpPoint] = useState<Point|null>(null)
-    const [mousePoint, setMousePoint] = useState<Point|null>(null)
+    // const [mouseUpPoint, setMouseUpPoint] = useState<Point|null>(null)
+    // const [mousePoint, setMousePoint] = useState<Point|null>(null)
     const [lineType, setLineType] = useState('solid')
 
     const sampleImage = '../assets/img/sample-1.png';
@@ -40,19 +41,22 @@ const Canvas = ({targets}: Props) => {
         return {id, x1, y1, x2, y2, type}
     }
 
-    // const newElements = targets.map((target, index) => (
-    //     createElement(index, target.x1, target.y1, target.x2, target.y2, 'rectangle')
-    // ))
+    // -----------------------------------------------------------------------
 
-    // // setElements(prevState => [...prevState, newElement]);
-    // setElements(newElements)
+    // const createCircle = (id: number, x: number, y: number, radius: number): DrawingElement => {
 
+    //     console.log(`createCircle - id ${id} : center.x ${x} center.y ${y} radius ${radius}`)
+
+    //     const circle: Circle = {x, y, radius}
+
+    //     return {id, circle, type: 'circle'}
+    // }
 
     // -----------------------------------------------------------------------
 
     useEffect(() => {
         const newElements = targets.map((target, index) => (
-            createElement(index, target.x1, target.y1, target.x2, target.y2, 'rectangle')
+            createElement(index, target.x, target.y, target.x + target.width, target.y + target.height, 'rectangle')
         ))
         setElements(newElements)
     }, [targets])
@@ -100,33 +104,36 @@ const Canvas = ({targets}: Props) => {
                 context.setLineDash([])
                 break
         }
-        switch (element.type) {
-            case 'rectangle': {
-                const width = element.x2 - element.x1
-                const height = element.y2 - element.y1
-                context.strokeRect(element.x1, element.y1, width, height)
-                break
-            }
-            case 'line': {
-                context.beginPath();
-                context.moveTo(element.x1, element.y1)
-                context.lineTo(element.x2, element.y2);
-                // context.closePath();
-                context.stroke();
-                break
-            }
-            case 'crosshairs': {
-                const size = element.x2 - element.x1
-
-                context.beginPath();
-                context.moveTo(element.x1 - size, element.y1)
-                context.lineTo(element.x1 + size, element.y1)
-                context.moveTo(element.x1, element.y1 - size)
-                context.lineTo(element.x1, element.y1 + size)
-                context.stroke();
-                break
+        if (element) {
+            switch (element.type) {
+                case 'rectangle': {
+                    const width = element.x2 - element.x1
+                    const height = element.y2 - element.y1
+                    context.strokeRect(element.x1, element.y1, width, height)
+                    break
+                }
+                case 'line': {
+                    context.beginPath();
+                    context.moveTo(element.x1, element.y1)
+                    context.lineTo(element.x2, element.y2);
+                    // context.closePath();
+                    context.stroke();
+                    break
+                }
+                case 'crosshairs': {
+                    const size = element.x2 - element.x1
+    
+                    context.beginPath();
+                    context.moveTo(element.x1 - size, element.y1)
+                    context.lineTo(element.x1 + size, element.y1)
+                    context.moveTo(element.x1, element.y1 - size)
+                    context.lineTo(element.x1, element.y1 + size)
+                    context.stroke();
+                    break
+                }
             }
         }
+
         console.log(`draw - id: ${element.id} - x1 ${element.x1} y1 ${element.y1} x2 ${element.x2} y2 ${element.y2} - ${element.type}`)
     }
 
@@ -381,13 +388,13 @@ const Canvas = ({targets}: Props) => {
 
         const point: Point = {x: clientX, y: clientY}
 
-        setMousePoint(point)
+        // setMousePoint(point)
 
         if (tool === 'selection') {
             const element = getElementAtPosition(clientX, clientY, elements)
             // console.log(JSON.stringify(element))
             if (element) {
-                setSelectedElement(element)
+                // setSelectedElement(element)
                 const cursor = cursorForPosition(element.position)
                 // console.log(cursor)
                 event.currentTarget.style.cursor = cursor
@@ -427,16 +434,18 @@ const Canvas = ({targets}: Props) => {
                         const deltaX = clientX - mouseDownPoint.x
                         const deltaY = clientY - mouseDownPoint.y
 
-                        console.log(`moving - Mouse Down    (${mouseDownPoint.x}, ${mouseDownPoint.y})`)
-                        console.log(`moving - Mouse Current (${clientX}, ${clientY})`)
-                        console.log(`moving - Delta         (${deltaX}, ${deltaY})`)
-                        console.log(`moving - x1 ${x1} y1 ${y1} x2 ${x2} y2 ${y2}`)
-      
-                        updateElement(id, x1 + deltaX, y1 + deltaY, x2 + deltaX, y2 + deltaY, type)
-
-                        const point: Point = {x: clientX, y: clientY}
-
-                        setMouseDownPoint(point)
+                        if ((Math.abs(deltaX) >= 2) && (Math.abs(deltaY) >= 2)) {
+                            console.log(`moving - Mouse Down    (${mouseDownPoint.x}, ${mouseDownPoint.y})`)
+                            console.log(`moving - Mouse Current (${clientX}, ${clientY})`)
+                            console.log(`moving - Delta         (${deltaX}, ${deltaY})`)
+                            console.log(`moving - x1 ${x1} y1 ${y1} x2 ${x2} y2 ${y2}`)
+          
+                            updateElement(id, selectedElement.x1 + deltaX, selectedElement.y1 + deltaY, selectedElement.x2 + deltaX, selectedElement.y2 + deltaY, type)
+    
+                            // const point: Point = {x: clientX, y: clientY}
+    
+                            // setMouseDownPoint(point)    
+                        }
                     }
                 }
                 break
@@ -470,7 +479,7 @@ const Canvas = ({targets}: Props) => {
     const mouseUp = (event: React.MouseEvent<HTMLCanvasElement>) => {
         const {clientX, clientY} = event;
         const point: Point = {x: clientX, y: clientY}
-        setMouseUpPoint(point)
+        // setMouseUpPoint(point)
 
         const index = selectedElement?.id
         if (index !== undefined) {
@@ -500,39 +509,23 @@ const Canvas = ({targets}: Props) => {
 
     const info = () => {
         return (
-
             <span>
-            <input type='text'
-                id='down-point'
-                readOnly
-                size={20}
-                value={mouseDownPoint ? `{x: ${mouseDownPoint.x}, y: ${mouseDownPoint.y}}` : 'None'}
-            />
-            <label htmlFor='down-point' style={{paddingLeft: '5px'}}>Mouse Down&nbsp;&nbsp;</label>
-            <input type='text'
-                id='down-point'
-                readOnly
-                size={20}
-                value={mouseUpPoint ? `{x: ${mouseUpPoint.x}, y: ${mouseUpPoint.y}}` : 'None'}
-            />
-            <label htmlFor='down-point' style={{paddingLeft: '5px'}}>Mouse Up&nbsp;&nbsp;</label>
-            <input type='text'
-                id='mouse-point'
-                readOnly
-                size={20}
-                value={mousePoint ? `{x: ${mousePoint.x}, y: ${mousePoint.y}}` : 'None'}
-            />
-            <label htmlFor='mouse-point' style={{paddingLeft: '5px'}}>Mouse Point&nbsp;&nbsp;</label>
-            <input type='text'
-                id='element'
-                readOnly
-                size={40}
-                value={selectedElement ? `{id: ${selectedElement.id}, x1: ${selectedElement.x1}, y1: ${selectedElement.y1}, x2: ${selectedElement.x2}, y2: ${selectedElement.y2}}` : 'None'}
-            />
-            <label htmlFor='element' style={{paddingLeft: '5px'}}>Element&nbsp;</label>
-        </span>
+                <input type='text'
+                    id='down-point'
+                    readOnly
+                    size={20}
+                    value={mouseDownPoint ? `{x: ${mouseDownPoint.x}, y: ${mouseDownPoint.y}}` : 'None'}
+                />
+                <label htmlFor='down-point' style={{paddingLeft: '5px'}}>Mouse Down&nbsp;&nbsp;</label>
+                <input type='text'
+                    id='element'
+                    readOnly
+                    size={40}
+                    value={selectedElement ? `{id: ${selectedElement.id}, x1: ${selectedElement.x1}, y1: ${selectedElement.y1}, x2: ${selectedElement.x2}, y2: ${selectedElement.y2}}` : 'None'}
+                />
+                <label htmlFor='element' style={{paddingLeft: '5px'}}>Element&nbsp;</label>
+            </span>
         )
-
     }
 
     // -----------------------------------------------------------------------
