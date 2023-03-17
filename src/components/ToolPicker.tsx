@@ -1,4 +1,7 @@
 import React from "react";
+
+import Form from "react-bootstrap/Form";
+
 import {ToolType} from "../models/drawingElement";
 
 interface Props {
@@ -9,29 +12,33 @@ interface Props {
 const ToolPicker: React.FC<Props> = ({tool, setTool}) => {
     return (
         <div style={{position: 'fixed'}}>
-            <input type='radio'
-                   id='line'
-                   checked={tool === 'selection'}
-                   onChange={() => setTool('selection')}/>
-            <label htmlFor='selection'>Selection&nbsp;&nbsp;</label>
+            <Form.Check type='radio'
+                        inline
+                        id='line'
+                        checked={tool === 'selection'}
+                        label="Selection"
+                        onChange={() => setTool('selection')}/>
 
-            <input type='radio'
-                   id='line'
-                   checked={tool === 'line'}
-                   onChange={() => setTool('line')}/>
-            <label htmlFor='line'>Line&nbsp;&nbsp;</label>
+            <Form.Check type='radio'
+                        inline
+                        id='line'
+                        checked={tool === 'line'}
+                        label="Line"
+                        onChange={() => setTool('line')}/>
 
-            <input type='radio'
-                   id='rectangle'
-                   checked={tool === 'rectangle'}
-                   onChange={() => setTool('rectangle')}/>
-            <label htmlFor='rectangle'>Rectangle&nbsp;&nbsp;</label>
+            <Form.Check type='radio'
+                        inline
+                        id='rectangle'
+                        checked={tool === 'rectangle'}
+                        label="RectangleX"
+                        onChange={() => setTool('rectangle')}/>
 
-            <input type='radio'
-                   id='crosshairs'
-                   checked={tool === 'crosshairs'}
-                   onChange={() => setTool('crosshairs')}/>
-            <label htmlFor='crosshairs'>Cross Hairs&nbsp;&nbsp;</label>
+            <Form.Check type='radio'
+                        inline
+                        id='crosshairs'
+                        checked={tool === 'crosshairs'}
+                        label="Cross Hairs"
+                        onChange={() => setTool('crosshairs')}/>
         </div>
     );
 };
