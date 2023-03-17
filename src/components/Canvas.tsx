@@ -2,10 +2,11 @@ import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 
 import {Point} from '../models/point'
 import {PairOfPoints} from '../models/pairOfPoints'
-import {DrawingElement} from '../models/drawingElement'
+import {DrawingElement, ToolType} from '../models/drawingElement'
 import {Position} from '../models/position'
 import {Rectangle} from '../models/rectangle'
 import {Circle} from '../models/circle'
+import ToolPicker from "./ToolPicker";
 
 // ---------------------------------------------------------------------------
 
@@ -21,7 +22,7 @@ const Canvas = ({targets}: Props) => {
 
     const [elements, setElements] = useState<DrawingElement[]>([]);
     const [action, setAction] = useState('none');
-    const [tool, setTool] = useState('rectangle');
+    const [tool, setTool] = useState<ToolType>('rectangle');
     const [selectedElement, setSelectedElement] = useState<DrawingElement|null>(null);
     const [mouseDownPoint, setMouseDownPoint] = useState<Point|null>(null);
     // const [mouseUpPoint, setMouseUpPoint] = useState<Point|null>(null);
@@ -565,50 +566,13 @@ const Canvas = ({targets}: Props) => {
                 <label htmlFor='dashed'>Dashed</label>
             </span>
         );
-    }
-
-    // -----------------------------------------------------------------------
-
-    const pickTool = () => {
-        return (
-            <div style={{position: 'fixed'}}>
-                <input type='radio'
-                    id='line'
-                    checked={tool === 'selection'}
-                    onChange={() => setTool('selection')}
-                />
-                <label htmlFor='selection'>Selection&nbsp;&nbsp;</label>
-
-                <input type='radio'
-                    id='line'
-                    checked={tool === 'line'}
-                    onChange={() => setTool('line')}
-                />
-                <label htmlFor='line'>Line&nbsp;&nbsp;</label>
-
-                <input type='radio'
-                    id='rectangle'
-                    checked={tool === 'rectangle'}
-                    onChange={() => setTool('rectangle')}
-                />
-                <label htmlFor='rectangle'>Rectangle&nbsp;&nbsp;</label>
-
-                <input type='radio'
-                    id='crosshairs'
-                    checked={tool === 'crosshairs'}
-                    onChange={() => setTool('crosshairs')}
-                />
-                <label htmlFor='crosshairs'>Cross Hairs&nbsp;&nbsp;</label>
-
-            </div>
-        );
-    }
+    };
 
     // -----------------------------------------------------------------------
 
     return (
         <div>
-            {pickTool()}
+            <ToolPicker tool={tool} setTool={setTool}/>
             {/* {setLineFeatures()} */}
             {/* {info()} */}
                 <canvas 
@@ -627,7 +591,7 @@ const Canvas = ({targets}: Props) => {
         </div>
     );
 
-}
+};
 
 // ---------------------------------------------------------------------------
 

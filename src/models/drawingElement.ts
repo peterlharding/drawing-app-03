@@ -6,6 +6,8 @@ import {Rectangle} from './rectangle'
 import {Crosshairs} from './crosshairs'
 
 
+export type ToolType = 'selection' | 'line' | 'rectangle' | 'crosshairs'
+
 export interface DrawingElement {
     id: number,
     x1: number,
