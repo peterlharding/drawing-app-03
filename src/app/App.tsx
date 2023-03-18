@@ -15,7 +15,7 @@ const App = () => {
     
     return (
         <Container>
-            <Canvas targets={targets} width={1000} height={1000} />
+            <Canvas targets={targets} width={1000} height={1000} imageUrl={'https://wallpapercave.com/wp/pf3xWQ5.jpg'} />
         </Container>
     );
 }

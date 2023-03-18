@@ -19,7 +19,7 @@ interface Props {
 
 // ---------------------------------------------------------------------------
 
-const Canvas = ({targets, height, width}: Props) => {
+const Canvas = ({targets, width, height, imageUrl}: Props) => {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -87,7 +87,7 @@ const Canvas = ({targets, height, width}: Props) => {
             const backgroundImage = new Image();
 
             // backgroundImage.src = '../assets/img/english-countryside.jpg'    // 'https://www.w3schools.com/tags/img_the_scream.jpg' // 'https://performiq.com/img/logo2.gif' // '../assets/img/sample-1.png'
-            backgroundImage.src = 'https://wallpapercave.com/wp/pf3xWQ5.jpg' // 'https://performiq.com/img/logo2.gif' // '../assets/img/sample-1.png'
+            backgroundImage.src = imageUrl; // 'https://wallpapercave.com/wp/pf3xWQ5.jpg' // 'https://performiq.com/img/logo2.gif' // '../assets/img/sample-1.png'
 
             if (context !== null) {
                 context.clearRect(0, 0, canvas.width, canvas.height);
