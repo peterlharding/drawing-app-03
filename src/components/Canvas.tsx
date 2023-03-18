@@ -14,6 +14,7 @@ interface Props {
     targets: Rectangle[];
     height: number;
     width: number;
+    imageUrl: string;
 }
 
 // ---------------------------------------------------------------------------
