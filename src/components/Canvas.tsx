@@ -12,11 +12,13 @@ import ToolPicker from "./ToolPicker";
 
 interface Props {
     targets: Rectangle[];
+    height: number;
+    width: number;
 }
 
 // ---------------------------------------------------------------------------
 
-const Canvas = ({targets}: Props) => {
+const Canvas = ({targets, height, width}: Props) => {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -84,7 +86,7 @@ const Canvas = ({targets}: Props) => {
             const backgroundImage = new Image();
 
             // backgroundImage.src = '../assets/img/english-countryside.jpg'    // 'https://www.w3schools.com/tags/img_the_scream.jpg' // 'https://performiq.com/img/logo2.gif' // '../assets/img/sample-1.png'
-            // backgroundImage.src = 'https://wallpapercave.com/wp/pf3xWQ5.jpg' // 'https://performiq.com/img/logo2.gif' // '../assets/img/sample-1.png'
+            backgroundImage.src = 'https://wallpapercave.com/wp/pf3xWQ5.jpg' // 'https://performiq.com/img/logo2.gif' // '../assets/img/sample-1.png'
 
             if (context !== null) {
                 context.clearRect(0, 0, canvas.width, canvas.height);
@@ -566,7 +568,45 @@ const Canvas = ({targets}: Props) => {
                 <label htmlFor='dashed'>Dashed</label>
             </span>
         );
-    };
+    }
+
+    // -----------------------------------------------------------------------
+
+    const pickTool = () => {
+        return (
+            <div style={{position: 'fixed'}}>
+                <input type='radio'
+                    id='line'
+                    checked={tool === 'selection'}
+                    onChange={() => setTool('selection')}
+                />
+                <label htmlFor='selection'>Selection&nbsp;&nbsp;</label>
+
+                <input type='radio'
+                    id='line'
+                    checked={tool === 'line'}
+                    onChange={() => setTool('line')}
+                />
+                <label htmlFor='line'>Line&nbsp;&nbsp;</label>
+
+                <input type='radio'
+                    id='rectangle'
+                    checked={tool === 'rectangle'}
+                    onChange={() => setTool('rectangle')}
+                />
+                <label htmlFor='rectangle'>Rectangle&nbsp;&nbsp;</label>
+
+                <input type='radio'
+                    id='crosshairs'
+                    checked={tool === 'crosshairs'}
+                    onChange={() => setTool('crosshairs')}
+                />
+                <label htmlFor='crosshairs'>Cross Hairs&nbsp;&nbsp;</label>
+
+                {setLineFeatures()}
+            </div>
+        );
+    }
 
     // -----------------------------------------------------------------------
 
@@ -579,8 +619,8 @@ const Canvas = ({targets}: Props) => {
                     id='canvas'
                     ref={canvasRef}
                     style={{backgroundColor: '#e0e0e0'}}
-                    width={window.innerWidth}
-                    height={window.innerHeight}
+                    width={width}
+                    height={height}
                     onMouseDown={mouseDown}
                     onMouseMove={mouseMove}
                     onMouseUp={mouseUp}

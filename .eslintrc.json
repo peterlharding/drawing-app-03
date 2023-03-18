@@ -30,7 +30,7 @@
         "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/no-empty-function": "warn",
         "node/exports-style": ["warn", "module.exports"],
-        "node/file-extension-in-import": ["warn", "always"],
+        "node/file-extension-in-import": ["off", "never"],
         "node/prefer-global/buffer": ["warn", "always"],
         "node/prefer-global/console": ["warn", "always"],
         "node/prefer-global/process": ["warn", "always"],
@@ -38,8 +38,8 @@
         "node/prefer-global/url": ["warn", "always"],
         "node/prefer-promises/dns": "warn",
         "node/prefer-promises/fs": "warn",
-        "node/no-unsupported-features/es-syntax": "warn",
-        "node/no-missing-import": "warn",
+        "node/no-unsupported-features/es-syntax": "off",
+        "node/no-missing-import": "off",
         "import/named": "off"
     },
     "ignorePatterns": [
